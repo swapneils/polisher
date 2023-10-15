@@ -14,12 +14,20 @@ evaluated as usual lisp form."
 
 
 ;;; Reader macro
-(defun read-formula (stream end-char)
-  (coerce (loop for c = (read-char stream)
-                if (char= c end-char)
-                  do (loop-finish)
-                collect c)
-          'string))
+(defun read-formula (stream boundary-chars)
+  (let ((end-char (cdr boundary-chars))
+        (start-char (car boundary-chars))
+        (level 1))
+    (coerce (loop for c = (read-char stream)
+                  if (char= c start-char)
+                    do (incf level)
+                  if (char= c end-char)
+                    do (decf level)
+                  if (and (char= c end-char)
+                          (<= level 0))
+                    do (loop-finish)
+                  collect c)
+            'string)))
 
 
 (defparameter *infix-macro-boundary-chars* (cons #\{ #\})
@@ -42,7 +50,7 @@ The macro character \"i\" can be changed by the argument \"dispatch-char\"."
                                                           (car *infix-macro-boundary-chars*))
                                               (error "Infix syntax must be like #i{...}"))
                                             (infix-to-sexp (read-formula stream
-                                                                         (cdr *infix-macro-boundary-chars*)))))))
+                                                                         *infix-macro-boundary-chars*))))))
       (set-dispatch-macro-character #\# dispatch-char nil)))
 
 
