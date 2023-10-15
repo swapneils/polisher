@@ -122,13 +122,23 @@ Setup:
     (cl:map (if (listp seq) 'list 'vector) op seq)
     (funcall op seq)))
 
-(polisher:add-operator (make-instance 'polisher:operator :symbol '~ :function 'not :priority 10 :args 1)) ;;Note: this is a *postfix* `not` operator
-(polisher:add-operator (make-instance 'polisher:operator :symbol '& :function 'and :priority 0))
-(polisher:add-operator (make-instance 'polisher:operator :symbol '== :function 'equal :priority -2 :left-associative t))
+(polisher:add-operator (make-instance 'polisher:operator :symbol '> :function '> :priority 0.5))
+(polisher:add-operator (make-instance 'polisher:operator :symbol '< :function '< :priority 0.5))
+(polisher:add-operator (make-instance 'polisher:operator :symbol '== :function 'equal :priority 0.5 :left-associative t))
 
-(polisher:add-operator (make-instance 'polisher:operator :symbol '@ :function 'elt :priority 10))
+(polisher:add-operator (make-instance 'polisher:operator :symbol '~ :function 'not :priority 10 :args 1))
+(polisher:add-operator (make-instance 'polisher:operator :symbol '& :function 'and :priority 0))
+(polisher:add-operator (make-instance 'polisher:operator :symbol 'and :function 'and :priority 0))
+(polisher:add-operator (make-instance 'polisher:operator :symbol 'or :function 'or :priority 0))
+
+(polisher:add-operator (make-instance 'polisher:operator :symbol '@ :function 'element :priority 10))
 (polisher:add-operator (make-instance 'polisher:operator :symbol '? :function 'reverse-filter :priority -1 :left-associative t))
 (polisher:add-operator (make-instance 'polisher:operator :symbol '=> :function 'reverse-map :priority -1 :left-associative t))
+
+(polisher:add-operator (make-instance 'polisher:operator :symbol 'comp :function 'compose :priority -5 :left-associative t))
+(polisher:add-operator (make-instance 'polisher:operator :symbol 'andf :function 'andf :priority -5 :left-associative t))
+(polisher:add-operator (make-instance 'polisher:operator :symbol 'orf :function 'orf :priority -5 :left-associative t))
+(polisher:add-operator (make-instance 'polisher:operator :symbol '$ :function 'funcall-reverse :priority -5 :left-associative t))
 
 ```
 
@@ -138,10 +148,12 @@ Usage:
 #i{(`(list 1 2 3 4 5)=>#'1+ ?#'evenp)}
 ;;; => (2 4 6)
 #i{3&(`(list 1 2 3 4 5)=>#'1+ ?#'oddp)~==nil}
-;;; => t
-(unless #i{t&30&`(emptyp (polish "#(1 2 3 4 5)=>#'1+ ?#'oddp"))} 
-  "See what I mean?")
-;;; => "See what I mean?"
+;;; => T
+#i{(t or nil) and (`(list 1 2 3) ? (#'numberp andf #'oddp) $ #'length) == 2}
+;;; => T
+(unless #i{t&30&`(emptyp #i{#(1 2 3 4 5)=>#'1+ ?#'oddp})~~} 
+  "Very compact!")
+;;; => "Very compact!"
 ```
 
 
