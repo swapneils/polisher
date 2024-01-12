@@ -113,12 +113,12 @@ Setup:
 (polisher:activate-infix-syntax)
 ;;; Create a filtering function that takes the sequence first
 (defun reverse-filter (seq op)
-  (if (sequencep seq)
+  (if (serapeum:sequencep seq)
     (remove-if-not op seq)
     (and (funcall op seq) seq)))
 ;;; Create a mapping function that takes the sequence first
 (defun reverse-map (seq op)
-  (if (sequencep seq)
+  (if (serapeum:sequencep seq)
     (cl:map (if (listp seq) 'list 'vector) op seq)
     (funcall op seq)))
 

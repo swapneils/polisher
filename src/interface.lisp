@@ -45,10 +45,11 @@ The macro character \"i\" can be changed by the argument \"dispatch-char\"."
         (set-dispatch-macro-character #\# dispatch-char
                                       #'(lambda (stream disp-char sub-char)
                                           (declare (ignore disp-char sub-char))
-                                          (let ((first-char (read-char stream)))
-                                            (when (char/= first-char
-                                                          (car *infix-macro-boundary-chars*))
-                                              (error "Infix syntax must be like #i{...}"))
+                                          (let ((first-char (peek-char nil stream))
+                                                (start-char (car *infix-macro-boundary-chars*)))
+                                            (cond ((char= first-char start-char) (read-char stream))
+                                                  ((char= dispatch-char start-char) nil)
+                                                  (t (error "Infix syntax must be like #i{...}")))
                                             (infix-to-sexp (read-formula stream
                                                                          *infix-macro-boundary-chars*))))))
       (set-dispatch-macro-character #\# dispatch-char nil)))
