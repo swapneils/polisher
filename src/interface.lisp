@@ -49,9 +49,9 @@ The macro character \"i\" can be changed by the argument \"dispatch-char\"."
                                                 (start-char (car *infix-macro-boundary-chars*)))
                                             (cond ((char= first-char start-char) (read-char stream))
                                                   ((char= dispatch-char start-char) nil)
-                                                  (t (error "Infix syntax must be like #i{...}")))
+                                                  (t (error "Infix syntax must be like #~A{...}" dispatch-char)))
                                             (infix-to-sexp (read-formula stream
-                                                                         (cdr *infix-macro-boundary-chars*)))))))
+                                                                         *infix-macro-boundary-chars*))))))
       (set-dispatch-macro-character #\# dispatch-char nil)))
 
 
