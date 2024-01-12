@@ -51,7 +51,7 @@ The macro character \"i\" can be changed by the argument \"dispatch-char\"."
                                                   ((char= dispatch-char start-char) nil)
                                                   (t (error "Infix syntax must be like #i{...}")))
                                             (infix-to-sexp (read-formula stream
-                                                                         *infix-macro-boundary-chars*))))))
+                                                                         (cdr *infix-macro-boundary-chars*)))))))
       (set-dispatch-macro-character #\# dispatch-char nil)))
 
 

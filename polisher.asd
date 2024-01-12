@@ -4,7 +4,7 @@
   :license "MIT"
   :version "0.1"
   :homepage "https://github.com/mrcdr/polisher"
-  :depends-on (:cl-ppcre)
+  :depends-on (:alexandria :cl-ppcre)
   :serial t
   :components ((:file "package")
                (:module "src"

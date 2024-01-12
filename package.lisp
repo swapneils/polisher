@@ -1,6 +1,6 @@
 (defpackage polisher
-  (:use :cl)
+  (:use :cl :alexandria)
   (:export :polish
-           :operator
+   :operator
            :add-operator :list-operators :*operator-list*
-           :activate-infix-syntax))
+   :activate-infix-syntax))

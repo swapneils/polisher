@@ -24,7 +24,7 @@ The first arg goes before the operator and the rest after, as in languages like 
 
 
 (defmethod initialize-instance :after
-  ((this operator) &rest args)
+    ((this operator) &rest args)
   (declare (ignore args))
   (unless (slot-boundp this 'function)
     (setf (slot-value this 'function)
@@ -49,12 +49,12 @@ The first arg goes before the operator and the rest after, as in languages like 
 
 
 (defparameter *left-paren* '{)
-(defparameter *right-paren* '})
+  (defparameter *right-paren* '})
 (defparameter *separator* '_)
 
 (defparameter *max-priority* 1000)
-; This value will be automatically increased
-; when a higher prior operator is registered.
+                                        ; This value will be automatically increased
+                                        ; when a higher prior operator is registered.
 
 
 (defun add-operator (op)
@@ -62,11 +62,11 @@ The first arg goes before the operator and the rest after, as in languages like 
   (unless (typep op 'operator)
     (error "Argument must be operator"))
   (unless (every #'(lambda (x)
-                   (or (/= (slot-value op 'priority)
-                           (slot-value x 'priority))
-                       (eq (slot-value op 'left-associative)
-                           (slot-value x 'left-associative))))
-               *operator-list*)
+                     (or (/= (slot-value op 'priority)
+                             (slot-value x 'priority))
+                         (eq (slot-value op 'left-associative)
+                             (slot-value x 'left-associative))))
+                 *operator-list*)
     (error "Left- and right-associative operators both having the same priority can't be registered simultaneously"))
   (remove-if #'(lambda (x) (eq (slot-value op 'symbol) (slot-value x 'symbol)))
              *operator-list*)
@@ -90,7 +90,8 @@ The first arg goes before the operator and the rest after, as in languages like 
 
 
 (defun symbol-to-operator (symbol)
-  (find-if #'(lambda (item)
-               (equal symbol
-                      (slot-value item 'symbol)))
-           *operator-list*))
+  (let ((key (make-keyword symbol)))
+    (find-if (curry #'equal key)
+             *operator-list*
+             :key (compose #'make-keyword
+                           (rcurry #'slot-value 'symbol)))))
